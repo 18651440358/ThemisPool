@@ -1,0 +1,7 @@
+[mysql]
+host = localhost
+user = root
+password = 12345678
+database = practice
+initsize = 3
+maxsize = 6
