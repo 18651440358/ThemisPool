@@ -49,7 +49,7 @@ class ThemisPool(parameter):
         self.config = Config(fileName).getContent(configName)
         super(ThemisPool, self).__init__(**self.config)
         self.pool = queue.Queue(maxsize=self.maxsize)
-        self.currentSize = self.initsize
+        self.idleSize = self.initsize
         self._lock = threading.Lock()
         # 初始化连接池
         for i in range(self.initsize):
@@ -65,17 +65,16 @@ class ThemisPool(parameter):
 
     # 获取连接
     def getConn(self):
+        self._lock.acquire()
         try:
-            self._lock.acquire()
             # 如果池中连接够直接获取
             if not self.pool.empty():
-                self.currentSize -= 1
-                return self.pool.get()
+                self.idleSize -= 1
             else:
                 # 否则重新添加新连接
-                if self.currentSize < self.maxsize:
-                    self.currentSize += 1
-                    return self.createConn()
+                if self.idleSize < self.maxsize:
+                    self.idleSize += 1
+                    self.pool.put(self.createConn())
         finally:
             self._lock.release()
             return self.pool.get()
@@ -87,11 +86,14 @@ class ThemisPool(parameter):
             # 如果池中大于初始值就将多余关闭，否则重新放入池中
             if self.pool.qsize() < self.initsize:
                 self.pool.put(conn)
-                self.currentSize += 1
+                self.idleSize += 1
             else:
                 try:
-                    conn.close()
-                    self.currentSize -= 1
+                    # 取出多余连接并关闭
+                    surplus = self.pool.get()
+                    surplus.close()
+                    del surplus
+                    self.idleSize -= 1
                 except pymysql.ProgrammingError as e:
                     raise e
         finally:
