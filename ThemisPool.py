@@ -112,3 +112,7 @@ class ThemisPool(parameter):
     def __del__(self):
         while not self.pool.empty():
             self.pool.get().close()
+
+            
+            
+            
