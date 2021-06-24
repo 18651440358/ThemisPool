@@ -8,6 +8,8 @@ import configparser
 import os
 import queue
 import threading
+import time
+
 import pymysql
 
 
@@ -76,6 +78,7 @@ class ThemisPool(parameter):
                     return self.createConn()
         finally:
             self._lock.release()
+            return self.pool.get()
 
     # 释放连接
     def releaseCon(self, conn=None):
@@ -99,13 +102,6 @@ class ThemisPool(parameter):
         themis = None
         try:
             themis = self.getConn()
-            if themis is None:
-                self._lock.acquire()
-                while True:
-                    themis = self.getConn()
-                    if themis is not None:
-                        self._lock.release()
-                        break
             themis.execute(sql)
             return themis.fetchall()
         finally:
