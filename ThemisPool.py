@@ -61,7 +61,7 @@ class ThemisPool(parameter):
                                user=self.user,
                                password=self.password,
                                database=self.database,
-                               charset='utf8').cursor()
+                               charset='utf8')
 
     # 获取连接
     def getConn(self):
@@ -99,20 +99,47 @@ class ThemisPool(parameter):
         finally:
             self._lock.release()
 
-    # 执行语句
-    def execute(self, sql):
+    # 拉取数据（查询）
+    def fetchone(self, sql):
         themis = None
+        cursor = None
         try:
             themis = self.getConn()
-            themis.execute(sql)
-            return themis.fetchall()
+            cursor = themis.cursor()
+            cursor.execute(sql)
+            return cursor.fetchall()
+        except pymysql.ProgrammingError as e:
+            raise e
+        except pymysql.OperationalError as e:
+            raise e
+        except pymysql.Error as e:
+            raise e
         finally:
+            cursor.close()
+            self.releaseCon(themis)
+
+    # 更新
+    def update(self, sql):
+        themis = None
+        cursor = None
+        try:
+            themis = self.getConn()
+            cursor = themis.cursor()
+            cursor.execute(sql)
+            return cursor.lastrowid
+        except pymysql.ProgrammingError as e:
+            raise e
+        except pymysql.OperationalError as e:
+            raise e
+        except pymysql.Error as e:
+            raise e
+        finally:
+            themis.commit()
+            cursor.close()
             self.releaseCon(themis)
 
     def __del__(self):
         while not self.pool.empty():
             self.pool.get().close()
 
-            
-            
             
