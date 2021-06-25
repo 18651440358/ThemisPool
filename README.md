@@ -65,9 +65,14 @@ from util.ThemisPool import ThemisPool
 # 初始化ThemisPool连接池 (Initialize the ThemisPool connection pool)
 db = ThemisPool()
 
-# execute方法需要传入SQL语句作为参数, 方法会返回处理结果 (The execute method needs to pass in the SQL statement as a parameter, and the method will return the processing result)
-data = db.execute('select * from cancer_menopause_enum')
-print(data)
+# 查询拉取数据,函数会直接返回数据 (Query pull data.It returns data directly)
+selectSql = "select * from user;"
+data = db.fetchone(selectSql)
+
+# 增、删、改语句, 如果有使用mysql自增长插入的值函数会返回自增长的数据 (insert,upate delete and alter)
+insertSql = "insert into user values(null,'user001','123456')"
+id = db.update(selectSql)
+
 
 ```
 
