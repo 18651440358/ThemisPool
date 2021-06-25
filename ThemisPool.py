@@ -54,7 +54,9 @@ class ThemisPool(parameter):
         # 初始化连接池
         for i in range(self.initsize):
             self.pool.put(self.createConn())
-
+        # print('')
+        print('\033[1;32m ThemisPool connect database {database}, login is {user} \033[0m'.format(database=self.database,
+                                                                                 user=self.user))
     # 生产连接
     def createConn(self):
         return pymysql.connect(host=self.host,
@@ -139,7 +141,10 @@ class ThemisPool(parameter):
             self.releaseCon(themis)
 
     def __del__(self):
-        while not self.pool.empty():
-            self.pool.get().close()
-
-            
+        try:
+            while True:
+                conn = self.pool.get_nowait()
+            if conn:
+                conn.close()
+        except queue.Empty:
+            pass
