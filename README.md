@@ -69,7 +69,7 @@ db = ThemisPool()
 selectSql = "select * from user;"
 data = db.fetchone(selectSql)
 
-# 增、删、改语句, 如果有使用mysql自增长插入的值函数会返回自增长的数据 (insert,upate delete and alter)
+# 增、删、改语句, 如果有使用mysql自增长插入的值函数会返回自增长的数据 (insert,upate delete and alter. If there is a value function inserted using mysql self-growth, it will return self-growth data)
 insertSql = "insert into user values(null,'user001','123456')"
 id = db.update(selectSql)
 
