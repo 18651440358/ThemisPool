@@ -35,8 +35,9 @@ class Config(object):
 
 # 获取配置文件参数
 class parameter(object):
-    def __init__(self, password, database, host="localhost", user="root", initsize=3, maxsize=6):
+    def __init__(self, password, database, host="localhost", port="3306", user="root", initsize=3, maxsize=6):
         self.host = str(host)
+        self.port = str(port)
         self.user = str(user)
         self.password = str(password)
         self.database = str(database)
@@ -60,6 +61,7 @@ class ThemisPool(parameter):
     # 生产连接
     def createConn(self):
         return pymysql.connect(host=self.host,
+                               port=self.port,
                                user=self.user,
                                password=self.password,
                                database=self.database,
