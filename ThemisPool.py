@@ -37,7 +37,7 @@ class Config(object):
 class parameter(object):
     def __init__(self, password, database, host="localhost", port="3306", user="root", initsize=3, maxsize=6):
         self.host = str(host)
-        self.port = str(port)
+        self.port = int(port)
         self.user = str(user)
         self.password = str(password)
         self.database = str(database)
