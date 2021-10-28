@@ -48,7 +48,7 @@ maxsize = 6
 |参数<br>(Attribute)|说明<br>(Description)|类型<br>(Type)|默认值<br>(Default)|
 |:-:|---|:-:|---|
 |host|连接数据库的地址<br>The address to connect to the database|String|localhost|
-| port | 端口号 | str | 3306 |
+| port | 端口号 | int | 3306 |
 |user|连接数据库的用户名<br>User name to connect to the database|String|root|
 |password|连接数据库的密码<br>Password to connect to the database|String|-|
 |database|本次需要连接的数据库<br>The database that needs to be connected this time|String|-|
